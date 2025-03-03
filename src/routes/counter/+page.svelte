@@ -14,11 +14,11 @@
 		ob: product.ob,
 		received: product.received,
 		get total() {
-			return 0;
+			return this.ob + this.received;
 		},
 		cb: product.cb,
 		get sell() {
-			return this.ob + this.received - this.cb;
+			return this.total - this.cb;
 		},
 		price: product.price,
 		get amount() {
@@ -44,23 +44,30 @@
 	// TODO: Add types
 	const init = (api) => {
 		api.intercept('update-cell', async ({ id, column, value }: { id: number; column: string; value: any }) => {
-			if (column === 'received' || column === 'cb') {
-				if (isNaN(value)) return false;
-				const newValue = Number(value);
-				const response = await fetch(`${PUBLIC_BASE_URL}/counter/${id}`, {
-					method: 'PATCH',
-					body: JSON.stringify({ key: column, value: newValue }),
-				});
+			if (!['received', 'cb'].includes(column)) return;
+			if (isNaN(value)) return false;
 
-				if (!response.ok) return false;
-			}
+			const newValue = Number(value);
+			const response = await fetch(`${PUBLIC_BASE_URL}/counter/${id}`, {
+				body: JSON.stringify({ key: column, value: newValue }),
+				method: 'PATCH',
+			});
+
+			if (!response.ok) return false;
 		});
 
 		api.on('update-cell', ({ id, column }: { id: number; column: string }) => {
-			if (['ob', 'received', 'cb'].includes(column)) {
+			if (['ob', 'received'].includes(column)) {
 				const products: CounterProduct[] = api.getState().data;
 				const product: CounterProduct = products.find((product) => product.id === id)!;
-				const sell = Number(product.ob) + Number(product.received) - Number(product.cb);
+				const total = Number(product.ob) + Number(product.received);
+				api.exec('update-cell', { id, column: 'total', value: total });
+			}
+
+			if (['total', 'cb'].includes(column)) {
+				const products: CounterProduct[] = api.getState().data;
+				const product: CounterProduct = products.find((product) => product.id === id)!;
+				const sell = Number(product.total) - Number(product.cb);
 				api.exec('update-cell', { id, column: 'sell', value: sell });
 			}
 
