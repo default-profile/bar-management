@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { CounterProduct } from '@prisma/client';
+	import type { CompleteCounterStock } from '$lib/types';
+	import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
 
 	// @ts-ignore
 	import { Grid, Material } from 'wx-svelte-grid';
@@ -7,24 +8,6 @@
 	import type { PageProps } from './$types';
 
 	const { data }: PageProps = $props();
-	const products = data.products.map((product) => ({
-		id: product.id,
-		name: product.name,
-		quantity: product.quantity,
-		ob: product.ob,
-		received: product.received,
-		get total() {
-			return this.ob + this.received;
-		},
-		cb: product.cb,
-		get sell() {
-			return this.total - this.cb;
-		},
-		price: product.price,
-		get amount() {
-			return this.sell * this.price;
-		},
-	}));
 
 	const columns = [
 		{ id: 'id', header: '#', width: 50, hidden: true },
@@ -58,24 +41,21 @@
 
 		api.on('update-cell', ({ id, column }: { id: number; column: string }) => {
 			if (['ob', 'received'].includes(column)) {
-				const products: CounterProduct[] = api.getState().data;
-				const product: CounterProduct = products.find((product) => product.id === id)!;
-				const total = Number(product.ob) + Number(product.received);
-				api.exec('update-cell', { id, column: 'total', value: total });
+				const products: CompleteCounterStock[] = api.getState().data;
+				const product: CompleteCounterStock = products.find((product) => product.id === id)!;
+				api.exec('update-cell', { id, column: 'total', value: calculateTotal(product) });
 			}
 
 			if (['total', 'cb'].includes(column)) {
-				const products: CounterProduct[] = api.getState().data;
-				const product: CounterProduct = products.find((product) => product.id === id)!;
-				const sell = Number(product.total) - Number(product.cb);
-				api.exec('update-cell', { id, column: 'sell', value: sell });
+				const products: CompleteCounterStock[] = api.getState().data;
+				const product: CompleteCounterStock = products.find((product) => product.id === id)!;
+				api.exec('update-cell', { id, column: 'sell', value: calculateSell(product) });
 			}
 
 			if (['price', 'sell'].includes(column)) {
-				const products: CounterProduct[] = api.getState().data;
-				const product: CounterProduct = products.find((product) => product.id === id)!;
-				const amount = Number(product.price) * Number(product.sell);
-				api.exec('update-cell', { id, column: 'amount', value: amount });
+				const products: CompleteCounterStock[] = api.getState().data;
+				const product: CompleteCounterStock = products.find((product) => product.id === id)!;
+				api.exec('update-cell', { id, column: 'amount', value: calculateAmount(product) });
 			}
 		});
 	};
@@ -83,6 +63,6 @@
 
 <div class="w-full">
 	<Material>
-		<Grid data={products} {columns} {init} />
+		<Grid data={data.products} {columns} {init} />
 	</Material>
 </div>

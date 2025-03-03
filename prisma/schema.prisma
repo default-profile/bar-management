@@ -14,14 +14,14 @@ datasource db {
 }
 
 model Product {
-  id       Int              @id @default(autoincrement())
+  id       Int            @id @default(autoincrement())
   name     String
   quantity Int
   price    Int
-  stocks   CounterProduct[]
+  stocks   CounterStock[]
 }
 
-model CounterProduct {
+model CounterStock {
   id        Int      @id @default(autoincrement())
   productId Int
   product   Product  @relation(fields: [productId], references: [id])
@@ -29,11 +29,8 @@ model CounterProduct {
   quantity  Int
   ob        Int
   received  Int
-  total     Int
   cb        Int
-  sell      Int
   price     Int
-  amount    Int
   date      DateTime @db.Date
 }
 
