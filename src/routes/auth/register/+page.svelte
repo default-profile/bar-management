@@ -8,7 +8,7 @@
 		await authClient.signUp.email(data, {
 			onSuccess(context) {
 				alert('Registration successful');
-				goto('/');
+				goto('/counter');
 			},
 			onError(context) {
 				alert('Registration failed');

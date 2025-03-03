@@ -8,7 +8,7 @@
 		await authClient.signIn.email(data, {
 			onSuccess(context) {
 				alert('Login successful');
-				goto('/counter');
+				goto('/');
 			},
 			onError(context) {
 				alert('Login failed');

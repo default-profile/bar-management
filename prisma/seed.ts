@@ -1,4 +1,5 @@
 import { type CounterStock, PrismaClient } from '@prisma/client';
+import { auth } from '../src/lib/server/auth';
 import products from './products.json';
 
 const prisma = new PrismaClient();
@@ -17,3 +18,13 @@ const counterStocks = savedProducts.map<Omit<CounterStock, 'id'>>((product) => (
 }));
 
 await prisma.counterStock.createMany({ data: counterStocks });
+const session = await auth.api.signUpEmail({
+	body: {
+		name: 'Default',
+		email: 'defaultprofile.dp@gmail.com',
+		password: 'Default@12345',
+	},
+});
+
+if (session) await prisma.user.update({ where: { id: session.user.id }, data: { role: 'admin' } });
+else console.log('Failed to create admin account');
