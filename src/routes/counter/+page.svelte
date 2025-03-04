@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CompleteCounterStock } from '$lib/types';
 	import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
+	import { WillowDark } from 'wx-svelte-core';
 
 	// @ts-ignore
 	import { Grid, Material } from 'wx-svelte-grid';
@@ -31,7 +32,7 @@
 			if (isNaN(value)) return false;
 
 			const newValue = Number(value);
-			const response = await fetch(`${PUBLIC_BASE_URL}/counter/${id}`, {
+			const response = await fetch(`${PUBLIC_BASE_URL}/api/counter/${id}`, {
 				body: JSON.stringify({ key: column, value: newValue }),
 				method: 'PATCH',
 			});
@@ -62,7 +63,7 @@
 </script>
 
 <div class="w-full">
-	<Material>
+	<WillowDark>
 		<Grid data={data.products} {columns} {init} />
-	</Material>
+	</WillowDark>
 </div>
