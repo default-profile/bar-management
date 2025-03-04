@@ -28,3 +28,11 @@ const session = await auth.api.signUpEmail({
 
 if (session) await prisma.user.update({ where: { id: session.user.id }, data: { role: 'admin' } });
 else console.log('Failed to create admin account');
+
+await auth.api.signUpEmail({
+	body: {
+		name: 'Demo',
+		email: 'demo@gmail.com',
+		password: 'Demo@12345',
+	},
+});

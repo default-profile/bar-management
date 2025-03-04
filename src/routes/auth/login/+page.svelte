@@ -6,13 +6,8 @@
 	async function login(e: SubmitEvent) {
 		e.preventDefault();
 		await authClient.signIn.email(data, {
-			onSuccess(context) {
-				alert('Login successful');
-				goto('/counter');
-			},
-			onError(context) {
-				alert('Login failed');
-			},
+			onSuccess: (context) => goto('/counter'),
+			onError: (context) => alert('Login failed'),
 		});
 	}
 </script>
@@ -25,6 +20,7 @@
 
 <div class="flex justify-center">
 	<div class="card mt-16 w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
+		<div class="text-2xl">User Login</div>
 		<form class="card-body" onsubmit={login}>
 			<fieldset class="fieldset">
 				<label for="email" class="fieldset-label">Email</label>

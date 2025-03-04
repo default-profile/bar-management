@@ -7,7 +7,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ request }) => {
 	const session = await auth.api.getSession({ headers: request.headers });
-	if (!session) return redirect(302, '/auth/login');
+	if (session === null || session.user.role !== 'user') return redirect(302, '/auth/login');
 	const counterStocks = await prisma.counterStock.findMany({ orderBy: { name: 'asc' } });
 	const completeStocks = counterStocks.map<CompleteCounterStock>((stock) => {
 		const total = calculateTotal(stock);

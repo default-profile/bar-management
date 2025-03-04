@@ -32,6 +32,8 @@ model CounterStock {
   cb        Int
   price     Int
   date      DateTime @db.Date
+
+  @@unique([productId, date])
 }
 
 model User {

@@ -30,8 +30,19 @@
 		api.intercept('update-cell', async ({ id, column, value }: { id: number; column: string; value: any }) => {
 			if (!['received', 'cb'].includes(column)) return;
 			if (isNaN(value)) return false;
-
 			const newValue = Number(value);
+			if (newValue < 0) return false;
+
+			if (column === 'cb') {
+				const products: CompleteCounterStock[] = api.getState().data;
+				const product: CompleteCounterStock = products.find((product) => product.id === id)!;
+				const total = calculateTotal(product);
+				if (newValue > total) {
+					alert('Closing balance must be less than or equal to total');
+					return false;
+				}
+			}
+
 			const response = await fetch(`${PUBLIC_BASE_URL}/api/counter/${id}`, {
 				body: JSON.stringify({ key: column, value: newValue }),
 				method: 'PATCH',
