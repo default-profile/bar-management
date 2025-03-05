@@ -15,12 +15,26 @@
 		{#if $session.data}
 			{#if $session.data.user.role === 'admin'}
 				<ul class="menu menu-horizontal px-1">
-					<li><button onclick={logout}>Logout</button></li>
+					<li>
+						<details>
+							<summary>{$session.data.user.name}</summary>
+							<ul class="rounded-t-none bg-base-100 p-2">
+								<li><button onclick={logout}>LogOut</button></li>
+							</ul>
+						</details>
+					</li>
 				</ul>
 			{:else}
 				<ul class="menu menu-horizontal px-1">
 					<li><a href="/counter" class:link={page.url.pathname === '/counter'}>Counter</a></li>
-					<li><button onclick={logout}>Logout</button></li>
+					<li>
+						<details>
+							<summary>{$session.data.user.name}</summary>
+							<ul class="rounded-t-none bg-base-100 p-2">
+								<li><button onclick={logout}>LogOut</button></li>
+							</ul>
+						</details>
+					</li>
 				</ul>
 			{/if}
 		{:else}
