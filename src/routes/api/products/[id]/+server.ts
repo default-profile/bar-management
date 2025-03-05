@@ -5,12 +5,9 @@ import type { RequestEvent } from '@sveltejs/kit';
 export async function PATCH({ params, request }: RequestEvent) {
 	const session = await auth.api.getSession({ headers: request.headers });
 	if (!session) return Response.json({ message: 'Unauthorized' }, { status: 401 });
+	if (session.user.role !== 'admin') Response.json({ message: 'Forbidden' }, { status: 403 });
 
 	const { key, value } = await request.json();
-	if (session.user.role === 'user' && !['received', 'cb'].includes(key)) {
-		return Response.json({ message: 'Forbidden' }, { status: 403 });
-	}
-
-	await prisma.counterStock.update({ where: { id: Number(params.id) }, data: { [key]: value } });
+	await prisma.product.update({ where: { id: Number(params.id) }, data: { [key]: value } });
 	return new Response(JSON.stringify({}));
 }

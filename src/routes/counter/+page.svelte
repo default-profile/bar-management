@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { CompleteCounterStock } from '$lib/types';
 	import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
-	import { WillowDark } from 'wx-svelte-core';
 
 	// @ts-ignore
-	import { Grid, Material } from 'wx-svelte-grid';
+	import { Grid, WillowDark } from 'wx-svelte-grid';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 	import type { PageProps } from './$types';
 

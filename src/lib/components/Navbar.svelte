@@ -14,7 +14,10 @@
 	<div class="flex-none">
 		{#if $session.data}
 			{#if $session.data.user.role === 'admin'}
+				<!-- Admin menu items -->
 				<ul class="menu menu-horizontal px-1">
+					<li><a href="/admin/products" class:link={page.url.pathname === '/admin/products'}>Products</a></li>
+					<li><a href="/admin/counter" class:link={page.url.pathname === '/admin/counter'}>Counter</a></li>
 					<li>
 						<details>
 							<summary>{$session.data.user.name}</summary>
@@ -25,6 +28,7 @@
 					</li>
 				</ul>
 			{:else}
+				<!-- User menu items -->
 				<ul class="menu menu-horizontal px-1">
 					<li><a href="/counter" class:link={page.url.pathname === '/counter'}>Counter</a></li>
 					<li>
