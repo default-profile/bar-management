@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { authClient } from '$lib/auth-client';
+	import { quantity } from '$lib/utils';
 
 	const session = authClient.useSession();
 	const logout = async () => await authClient.signOut({ fetchOptions: { onSuccess: () => goto('/') } });
@@ -17,7 +18,18 @@
 				<!-- Admin menu items -->
 				<ul class="menu menu-horizontal px-1">
 					<li><a href="/admin/products" class:link={page.url.pathname === '/admin/products'}>Products</a></li>
-					<li><a href="/admin/counter" class:link={page.url.pathname === '/admin/counter'}>Counter</a></li>
+					<li>
+						<details>
+							<summary>Counter</summary>
+							<ul class="rounded-t-none bg-base-100 p-2">
+								{#each quantity as q}
+									<li>
+										<a href="/admin/counter/{q}" class:link={page.url.pathname === `/admin/counter/${q}`}>{q}ML</a>
+									</li>
+								{/each}
+							</ul>
+						</details>
+					</li>
 					<li>
 						<details>
 							<summary>{$session.data.user.name}</summary>
@@ -30,7 +42,18 @@
 			{:else}
 				<!-- User menu items -->
 				<ul class="menu menu-horizontal px-1">
-					<li><a href="/counter" class:link={page.url.pathname === '/counter'}>Counter</a></li>
+					<li>
+						<details>
+							<summary>Counter</summary>
+							<ul class="rounded-t-none bg-base-100 p-2">
+								{#each quantity as q}
+									<li>
+										<a href="/counter/{q}" class:link={page.url.pathname === `/counter/${q}`}>{q}ML</a>
+									</li>
+								{/each}
+							</ul>
+						</details>
+					</li>
 					<li>
 						<details>
 							<summary>{$session.data.user.name}</summary>

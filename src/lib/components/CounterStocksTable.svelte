@@ -1,18 +1,17 @@
 <script lang="ts">
-	import type { CompleteCounterStock } from '$lib/types';
-	import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
-
 	// @ts-ignore
-	import { Grid, WillowDark } from 'wx-svelte-grid';
+	import { Grid, Material, Willow, WillowDark } from 'wx-svelte-grid';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
-	import type { PageProps } from './$types';
+	import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
+	import type { CompleteCounterStock, Quantity } from '$lib/types';
 
-	const { data }: PageProps = $props();
+	const { data, quantity }: { data: CompleteCounterStock[]; quantity: Quantity } = $props();
 
-	const columns = [
+	// Note: Name header was not updating without derived state
+	const columns = $derived([
 		{ id: 'id', header: '#', width: 50, hidden: true },
-		{ id: 'name', header: 'Name', width: 200 },
-		{ id: 'quantity', header: 'Quantity (ML)', width: 150 },
+		{ id: 'name', header: `Name/${quantity}ML`, width: 200 },
+		{ id: 'quantity', header: 'Quantity (ML)', width: 150, hidden: true },
 		{ id: 'ob', header: 'O.B.', width: 100 },
 		{ id: 'received', header: 'Received', width: 100, editor: 'text' },
 		{ id: 'total', header: 'Total', width: 100 },
@@ -20,7 +19,7 @@
 		{ id: 'sell', header: 'Sell', width: 100 },
 		{ id: 'price', header: 'Price', width: 100 },
 		{ id: 'amount', header: 'Amount', width: 200 },
-	];
+	]);
 
 	const isNaN = (value: any) => Number.isNaN(Number(value));
 
@@ -73,7 +72,7 @@
 </script>
 
 <div class="w-full">
-	<WillowDark>
-		<Grid data={data.products} {columns} {init} />
-	</WillowDark>
+	<Material>
+		<Grid {data} {columns} {init} />
+	</Material>
 </div>

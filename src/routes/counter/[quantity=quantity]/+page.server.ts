@@ -1,16 +1,24 @@
 import { auth } from '$lib/server/auth';
 import prisma from '$lib/server/prisma';
-import type { CompleteCounterStock } from '$lib/types';
+import type { CompleteCounterStock, Quantity } from '$lib/types';
 import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
+import { Temporal } from '@js-temporal/polyfill';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoadEvent } from './$types';
 
 export const ssr = false;
 
-export async function load({ request }: PageServerLoadEvent) {
+export async function load({ params, request }: PageServerLoadEvent) {
 	const session = await auth.api.getSession({ headers: request.headers });
 	if (session === null || session.user.role !== 'user') return redirect(302, '/auth/login');
-	const counterStocks = await prisma.counterStock.findMany({ orderBy: { name: 'asc' } });
+
+	const quantity = Number(params.quantity);
+	const today = Temporal.Now.plainDateISO('Asia/Calcutta');
+	const counterStocks = await prisma.counterStock.findMany({
+		where: { date: new Date(today.toString()), quantity: quantity },
+		orderBy: { name: 'asc' },
+	});
+
 	const completeStocks = counterStocks.map<CompleteCounterStock>((stock) => {
 		const total = calculateTotal(stock);
 		const sell = calculateSell(total, stock.cb);
@@ -18,5 +26,5 @@ export async function load({ request }: PageServerLoadEvent) {
 		return { ...stock, total, sell, amount };
 	});
 
-	return { products: completeStocks.sort((a, b) => Math.sign(a.quantity - b.quantity)) };
+	return { counterStocks: completeStocks, quantity: quantity as Quantity };
 }

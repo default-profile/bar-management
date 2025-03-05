@@ -30,3 +30,5 @@ export function calculateAmount(
 	if (typeof sellOrProduct === 'object') return calculate(sellOrProduct.sell, sellOrProduct.price);
 	else return calculate(sellOrProduct, price);
 }
+
+export const quantity = [90, 180, 330, 375, 500, 650, 750, 1000, 2000] as const;

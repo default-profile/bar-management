@@ -6,17 +6,11 @@
 	async function login(e: SubmitEvent) {
 		e.preventDefault();
 		await authClient.signIn.email(data, {
-			onSuccess: (context) => goto('/counter'),
+			onSuccess: (context) => goto('/'),
 			onError: (context) => alert('Login failed'),
 		});
 	}
 </script>
-
-<!--<form onsubmit={login}>-->
-<!--	<input type="email" name="email" placeholder="Email" bind:value={data.email} />-->
-<!--	<input type="password" name="password" placeholder="Password" bind:value={data.password} />-->
-<!--	<button type="submit">Login</button>-->
-<!--</form>-->
 
 <div class="flex justify-center">
 	<div class="card mt-16 w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
