@@ -17,7 +17,18 @@
 			{#if $session.data.user.role === 'admin'}
 				<!-- Admin menu items -->
 				<ul class="menu menu-horizontal px-1">
-					<li><a href="/admin/products" class:link={page.url.pathname === '/admin/products'}>Products</a></li>
+					<li>
+						<details>
+							<summary>Products</summary>
+							<ul class="rounded-t-none bg-base-100 p-2">
+								{#each quantity as q}
+									<li>
+										<a href="/admin/products/{q}" class:link={page.url.pathname === `/admin/products/${q}`}>{q}ML</a>
+									</li>
+								{/each}
+							</ul>
+						</details>
+					</li>
 					<li>
 						<details>
 							<summary>Counter</summary>
@@ -32,7 +43,7 @@
 					</li>
 					<li>
 						<details>
-							<summary>{$session.data.user.name}</summary>
+							<summary class="bg-primary-content">{$session.data.user.name}</summary>
 							<ul class="rounded-t-none bg-base-100 p-2">
 								<li><button onclick={logout}>LogOut</button></li>
 							</ul>
@@ -56,7 +67,7 @@
 					</li>
 					<li>
 						<details>
-							<summary>{$session.data.user.name}</summary>
+							<summary class="bg-primary-content">{$session.data.user.name}</summary>
 							<ul class="rounded-t-none bg-base-100 p-2">
 								<li><button onclick={logout}>LogOut</button></li>
 							</ul>

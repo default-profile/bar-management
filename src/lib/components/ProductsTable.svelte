@@ -2,33 +2,22 @@
 	// @ts-ignore
 	import { Grid, Material } from 'wx-svelte-grid';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
-	import { quantity } from '$lib/utils';
-	import type { PageProps } from './$types';
+	import type { Quantity } from '$lib/types';
+	import type { Product } from '@prisma/client';
 
-	const { data }: PageProps = $props();
+	const { data, quantity }: { data: Product[]; quantity: Quantity } = $props();
 
-	const options = quantity.map((value) => ({ id: value, label: value }));
-
-	const columns = [
+	const columns = $derived([
 		{ id: 'id', header: '#', width: 50, hidden: true },
-		{ id: 'name', header: 'Name', width: 200, editor: 'text' },
-		{
-			id: 'quantity',
-			header: 'Quantity (ML)',
-			width: 150,
-			editor: 'richselect',
-			options: options,
-		},
+		{ id: 'name', header: `Name/${quantity}ML`, width: 200, editor: 'text' },
 		{ id: 'price', header: 'Price', width: 100, editor: 'text' },
-	];
+	]);
 
 	const isNaN = (value: any) => Number.isNaN(Number(value));
 
 	// TODO: Add types
 	const init = (api) => {
 		api.intercept('update-cell', async ({ id, column, value }: { id: number; column: string; value: any }) => {
-			if (column === 'quantity' && !options.map(({ id }) => id).includes(value)) return false;
-
 			if (column === 'price') {
 				if (isNaN(value)) return false;
 				value = Number(value);
@@ -47,6 +36,6 @@
 
 <div class="w-full">
 	<Material>
-		<Grid data={data.products} {columns} {init} />
+		<Grid {data} {columns} {init} />
 	</Material>
 </div>
