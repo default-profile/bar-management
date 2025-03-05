@@ -1,8 +1,15 @@
 import prisma from '$lib/server/prisma';
 import { Temporal } from '@js-temporal/polyfill';
 import type { Prisma } from '@prisma/client';
+import type { RequestEvent } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
-export async function createCounterStocks() {
+export async function POST({ request }: RequestEvent) {
+	const authorizationHeader = request.headers.get('Authorization');
+	if (authorizationHeader !== `Bearer ${env.PRIVATE_CRON_SECRET}`) {
+		return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
+	}
+
 	const today = Temporal.Now.plainDateISO('Asia/Calcutta');
 	const yesterday = today.subtract({ days: 1 });
 
@@ -24,5 +31,6 @@ export async function createCounterStocks() {
 		};
 	});
 
-	return prisma.counterStock.createManyAndReturn({ data: counterStocks });
+	await prisma.counterStock.createMany({ data: counterStocks });
+	return new Response(JSON.stringify({ message: 'OK' }), { status: 200 });
 }
