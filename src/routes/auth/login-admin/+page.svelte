@@ -2,6 +2,6 @@
 	import LoginForm from '$lib/components/LoginForm.svelte';
 </script>
 
-<div class="flex justify-center">
-	<LoginForm title="Admin Login" />
+<div class="flex h-full items-center justify-center">
+	<LoginForm title="Admin" />
 </div>

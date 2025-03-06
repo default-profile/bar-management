@@ -17,9 +17,9 @@
 	}
 </script>
 
-<div class="card mt-16 w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
-	<div class="text-2xl">{title}</div>
+<div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
 	<form class="card-body" onsubmit={login}>
+		<div class="text-2xl">{title}</div>
 		<fieldset class="fieldset">
 			<label for="email" class="fieldset-label">Email</label>
 			<input id="email" type="email" class="input" placeholder="Email" bind:value={data.email} />
