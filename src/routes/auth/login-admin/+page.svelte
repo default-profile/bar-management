@@ -6,8 +6,8 @@
 	async function login(e: SubmitEvent) {
 		e.preventDefault();
 		await authClient.signIn.email(data, {
-			onSuccess: (context) => goto('/'),
-			onError: (context) => alert('Login failed'),
+			onSuccess: () => goto('/'),
+			onError: ({ error }) => alert(error.message),
 		});
 	}
 </script>

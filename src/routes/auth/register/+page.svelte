@@ -6,8 +6,8 @@
 	async function register(e: SubmitEvent) {
 		e.preventDefault();
 		await authClient.signUp.email(data, {
-			onSuccess: (context) => goto('/'),
-			onError: (context) => alert('Registration failed'),
+			onSuccess: () => goto('/'),
+			onError: ({ error }) => alert(error.message),
 		});
 	}
 </script>
