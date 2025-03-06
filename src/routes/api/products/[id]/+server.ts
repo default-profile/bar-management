@@ -9,5 +9,5 @@ export async function PATCH({ params, request }: RequestEvent) {
 
 	const { key, value } = await request.json();
 	await prisma.product.update({ where: { id: Number(params.id) }, data: { [key]: value } });
-	return new Response(JSON.stringify({}));
+	return Response.json({});
 }

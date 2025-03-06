@@ -20,7 +20,7 @@
 					<li>
 						<details>
 							<summary>Products</summary>
-							<ul class="rounded-t-none bg-base-100 p-2">
+							<ul class="z-1 rounded-t-none bg-base-100 p-2">
 								{#each quantity as q}
 									<li>
 										<a href="/admin/products/{q}" class:link={page.url.pathname === `/admin/products/${q}`}>{q}ML</a>
@@ -32,7 +32,7 @@
 					<li>
 						<details>
 							<summary>Counter</summary>
-							<ul class="rounded-t-none bg-base-100 p-2">
+							<ul class="z-1 rounded-t-none bg-base-100 p-2">
 								{#each quantity as q}
 									<li>
 										<a href="/admin/counter/{q}" class:link={page.url.pathname === `/admin/counter/${q}`}>{q}ML</a>
