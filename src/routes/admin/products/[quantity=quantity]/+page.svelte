@@ -6,12 +6,12 @@
 	const { data }: PageProps = $props();
 </script>
 
-<div class="flex h-[80vh]">
+<div class="flex h-full">
 	<div class="overflow-y-scroll">
 		<ProductsTable data={data.products} quantity={data.quantity} />
 	</div>
-	<div class="grow justify-items-center">
-		<div class="card mt-16 w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
+	<div class="flex grow items-center justify-center">
+		<div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
 			<form class="card-body" method="POST" action="?/addProduct" use:enhance>
 				<label for="name" class="fieldset-label">Name</label>
 				<input id="name" type="text" name="name" class="input" placeholder="Name" />

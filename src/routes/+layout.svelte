@@ -1,8 +1,11 @@
 <script lang="ts">
 	import '../app.css';
 	import Navbar from '$lib/components/Navbar.svelte';
-	let { children } = $props();
+	const { children } = $props();
+	let navbarHeight = $state(0);
 </script>
 
-<Navbar />
-<div class="p-6">{@render children()}</div>
+<Navbar bind:height={navbarHeight} />
+<div class="p-6" style="height: calc(100vh - {navbarHeight}px);">
+	{@render children()}
+</div>

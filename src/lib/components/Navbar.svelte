@@ -5,13 +5,15 @@
 	import { quantity } from '$lib/utils';
 	import { SvelteDate } from 'svelte/reactivity';
 
+	let { height = $bindable() } = $props();
+
 	const date = new SvelteDate();
 	const dateString = $derived(date.toISOString().split('T')[0]);
 	const session = authClient.useSession();
 	const logout = async () => await authClient.signOut({ fetchOptions: { onSuccess: () => goto('/') } });
 </script>
 
-<div class="navbar bg-base-100 shadow-sm">
+<div bind:clientHeight={height} class="navbar bg-base-100 shadow-sm">
 	<div class="flex-1">
 		<a href="/" class="btn text-xl btn-ghost">Bar Management</a>
 	</div>
