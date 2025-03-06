@@ -3,7 +3,10 @@
 	import { page } from '$app/state';
 	import { authClient } from '$lib/auth-client';
 	import { quantity } from '$lib/utils';
+	import { SvelteDate } from 'svelte/reactivity';
 
+	const date = new SvelteDate();
+	const dateString = $derived(date.toISOString().split('T')[0]);
 	const session = authClient.useSession();
 	const logout = async () => await authClient.signOut({ fetchOptions: { onSuccess: () => goto('/') } });
 </script>
@@ -35,7 +38,10 @@
 							<ul class="z-1 rounded-t-none bg-base-100 p-2">
 								{#each quantity as q}
 									<li>
-										<a href="/admin/counter/{q}" class:link={page.url.pathname === `/admin/counter/${q}`}>{q}ML</a>
+										<a
+											href="/admin/counter/{dateString}/{q}"
+											class:link={page.url.pathname === `/admin/counter/${dateString}/${q}`}>{q}ML</a
+										>
 									</li>
 								{/each}
 							</ul>

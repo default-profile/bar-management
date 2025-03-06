@@ -1,16 +1,15 @@
 import prisma from '$lib/server/prisma';
 import type { CompleteCounterStock, Quantity } from '$lib/types';
 import { calculateAmount, calculateSell, calculateTotal } from '$lib/utils';
-import { Temporal } from '@js-temporal/polyfill';
 import type { PageServerLoadEvent } from './$types';
 
 export const ssr = false;
 
-export async function load({ params, request }: PageServerLoadEvent) {
+export async function load({ params }: PageServerLoadEvent) {
+	const date = new Date(params.date);
 	const quantity = Number(params.quantity);
-	const today = Temporal.Now.plainDateISO('Asia/Calcutta');
 	const counterStocks = await prisma.counterStock.findMany({
-		where: { date: new Date(today.toString()), quantity: quantity },
+		where: { date: date, quantity: quantity },
 		orderBy: { name: 'asc' },
 	});
 
@@ -21,5 +20,5 @@ export async function load({ params, request }: PageServerLoadEvent) {
 		return { ...stock, total, sell, amount };
 	});
 
-	return { counterStocks: completeStocks, quantity: quantity as Quantity };
+	return { counterStocks: completeStocks, date: date.toISOString().split('T')[0], quantity: quantity as Quantity };
 }
