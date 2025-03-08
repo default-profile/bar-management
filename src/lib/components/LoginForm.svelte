@@ -8,24 +8,33 @@
 		onError?: (error: { error: { message: string } }) => void;
 	}
 
-	const { title, onSuccess = () => goto('/'), onError = ({ error }) => alert(error.message) }: Props = $props();
+	const { title }: Props = $props();
 
-	const data = $state({ email: '', password: '' });
-	async function login(e: SubmitEvent) {
+	let { email, otp, isOtpSent } = $state({ email: '', otp: '', isOtpSent: false });
+	async function sendOtp(e: SubmitEvent) {
 		e.preventDefault();
-		await authClient.signIn.email(data, { onSuccess, onError });
+		const { error } = await authClient.emailOtp.sendVerificationOtp({ email: email, type: 'sign-in' });
+		if (error) alert(error.message);
+		else isOtpSent = true;
+	}
+
+	async function loginWithOtp(e: SubmitEvent) {
+		e.preventDefault();
+		const { error } = await authClient.signIn.emailOtp({ email: email, otp: otp });
+		if (error) alert(error.message);
+		else goto('/');
 	}
 </script>
 
 <div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
-	<form class="card-body" onsubmit={login}>
+	<form class="card-body" onsubmit={isOtpSent ? loginWithOtp : sendOtp}>
 		<div class="text-2xl">{title}</div>
 		<fieldset class="fieldset">
 			<label for="email" class="fieldset-label">Email</label>
-			<input id="email" type="email" class="input" placeholder="Email" bind:value={data.email} />
-			<label for="password" class="fieldset-label">Password</label>
-			<input id="password" type="password" class="input" placeholder="Password" bind:value={data.password} />
-			<button class="btn mt-4 btn-neutral">Login</button>
+			<input id="email" type="email" class="input" placeholder="Email" disabled={isOtpSent} bind:value={email} />
+			<label for="otp" class="fieldset-label" hidden={!isOtpSent}>OTP</label>
+			<input id="otp" type="text" class="input" placeholder="OTP" hidden={!isOtpSent} bind:value={otp} />
+			<button class="btn mt-4 btn-neutral">{isOtpSent ? 'Login' : 'Send OTP'}</button>
 		</fieldset>
 	</form>
 </div>

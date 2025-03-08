@@ -11,12 +11,12 @@ export function toCompleteCounterStock(stock?: CounterStock): CompleteCounterSto
 	if (isNaN(stock.obPack)) throw Error('obPack is NaN');
 	const totalPack = Number(stock.obPack);
 
-	if (isNaN(stock.cb)) throw Error('cb is NaN');
-	const sell = total - Number(stock.cb);
-
 	if (isNaN(stock.cbPack)) throw Error('cbPack is NaN');
 	const shouldConvertToPack = Number(stock.cbPack) > Number(stock.obPack);
 	const sellPack = (shouldConvertToPack ? totalPack + bottleToPack(stock.quantity) : totalPack) - Number(stock.cbPack);
+
+	if (isNaN(stock.cb)) throw Error('cb is NaN');
+	const sell = total - Number(stock.cb) - (shouldConvertToPack ? 1 : 0);
 
 	if (isNaN(stock.price)) throw Error('price is NaN');
 	const amountBottles = sell * Number(stock.price);

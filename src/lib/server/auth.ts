@@ -3,8 +3,17 @@ import prisma from './prisma';
 import { betterAuth } from 'better-auth';
 import { APIError } from 'better-call';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { emailOTP } from 'better-auth/plugins';
 
 export const auth = betterAuth({
+	plugins: [
+		emailOTP({
+			disableSignUp: true,
+			async sendVerificationOTP({ email, otp, type }) {
+				console.log(email, otp, type);
+			},
+		}),
+	],
 	emailAndPassword: {
 		enabled: true,
 	},
@@ -23,7 +32,7 @@ export const auth = betterAuth({
 	},
 	hooks: {
 		after: createAuthMiddleware(async (ctx) => {
-			if (ctx.path !== '/sign-in/email') return;
+			if (ctx.path !== '/sign-in/email-otp') return;
 
 			const newSession = ctx.context.newSession;
 			const referer = ctx.getHeader('referer');

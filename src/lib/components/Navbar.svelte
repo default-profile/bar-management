@@ -23,6 +23,9 @@
 				<!-- Admin menu items -->
 				<ul class="menu menu-horizontal px-1">
 					<li>
+						<a href="/admin/users" class:link={page.url.pathname === `/admin/users`}>Users</a>
+					</li>
+					<li>
 						<details>
 							<summary>Products</summary>
 							<ul class="z-10 rounded-t-none bg-base-100 p-2">

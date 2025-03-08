@@ -75,6 +75,7 @@
 
 						if (!response.ok) {
 							alert('Something went wrong');
+							console.log(response);
 							return false;
 						}
 					} catch (error) {

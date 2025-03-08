@@ -7,7 +7,7 @@ export async function PATCH({ params, request }: RequestEvent) {
 	if (!session) return Response.json({ message: 'Unauthorized' }, { status: 401 });
 
 	const { key, value } = await request.json();
-	if (session.user.role === 'user' && !['received', 'cb'].includes(key)) {
+	if (session.user.role === 'user' && !['received', 'cb', 'cbPack'].includes(key)) {
 		return Response.json({ message: 'Forbidden' }, { status: 403 });
 	}
 
