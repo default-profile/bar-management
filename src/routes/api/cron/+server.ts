@@ -24,8 +24,10 @@ export async function POST({ request }: RequestEvent) {
 			name: product.name,
 			quantity: product.quantity,
 			price: product.price,
+			pricePack: product.pricePack,
 			date: today.toString(),
 			ob: yesterdaysCounterStock ? yesterdaysCounterStock.cb : 0,
+			obPack: yesterdaysCounterStock ? yesterdaysCounterStock.cbPack : 0,
 			received: 0,
 			cb: 0,
 		};

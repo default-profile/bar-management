@@ -4,8 +4,6 @@
 	import type { PageProps } from './$types';
 
 	const { data }: PageProps = $props();
-	// I am getting correct date value from server load function
-	console.log(data.date);
 </script>
 
 <input
@@ -15,4 +13,4 @@
 	onchange={(e) => goto(`/admin/counter/${e.currentTarget.value}/${data.quantity}`)}
 />
 
-<CounterStocksTable data={data.counterStocks} quantity={data.quantity} />
+<CounterStocksTable data={data.counterStocks} quantity={data.quantity} isAdmin={true} />

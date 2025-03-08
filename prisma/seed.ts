@@ -1,4 +1,4 @@
-import { type CounterStock, PrismaClient } from '@prisma/client';
+import { type Prisma, PrismaClient } from '@prisma/client';
 import { auth } from '../src/lib/server/auth';
 import products from './products.json';
 
@@ -6,11 +6,12 @@ const prisma = new PrismaClient();
 
 const savedProducts = await prisma.product.createManyAndReturn({ data: products });
 
-const counterStocks = savedProducts.map<Omit<CounterStock, 'id'>>((product) => ({
+const counterStocks = savedProducts.map<Prisma.CounterStockUncheckedCreateInput>((product) => ({
 	productId: product.id,
 	name: product.name,
 	quantity: product.quantity,
 	price: product.price,
+	pricePack: product.pricePack,
 	date: new Date(),
 	received: 0,
 	ob: 0,

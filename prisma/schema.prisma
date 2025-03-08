@@ -14,11 +14,12 @@ datasource db {
 }
 
 model Product {
-  id       Int            @id @default(autoincrement())
-  name     String
-  quantity Int
-  price    Int
-  stocks   CounterStock[]
+  id        Int            @id @default(autoincrement())
+  name      String
+  quantity  Int
+  price     Int
+  pricePack Int            @default(0)
+  stocks    CounterStock[]
 }
 
 model CounterStock {
@@ -28,9 +29,12 @@ model CounterStock {
   name      String
   quantity  Int
   ob        Int
+  obPack    Int      @default(0)
   received  Int
   cb        Int
+  cbPack    Int      @default(0)
   price     Int
+  pricePack Int      @default(0)
   date      DateTime @db.Date
 
   @@unique([productId, date])

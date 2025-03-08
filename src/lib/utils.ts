@@ -1,34 +1,44 @@
 import type { CompleteCounterStock } from '$lib/types';
 import type { CounterStock } from '@prisma/client';
 
-export function calculateTotal(ob: number | string, received: number | string): number;
-export function calculateTotal(product: CounterStock | CompleteCounterStock): number;
-export function calculateTotal(
-	obOrProduct: number | string | CounterStock | CompleteCounterStock,
-	received?: number | string,
-): number {
-	const calculate = (ob: number | string, received?: number | string) => Number(ob) + Number(received);
-	if (typeof obOrProduct === 'object') return calculate(obOrProduct.ob, obOrProduct.received);
-	else return calculate(obOrProduct, received);
+export function toCompleteCounterStock(stock?: CounterStock): CompleteCounterStock {
+	if (!stock) throw Error('Stock is undefined');
+	const isNaN = (value: any) => Number.isNaN(Number(value));
+
+	if (isNaN(stock.ob)) throw Error('ob is NaN');
+	const total = Number(stock.ob) + Number(stock.received);
+
+	if (isNaN(stock.obPack)) throw Error('obPack is NaN');
+	const totalPack = Number(stock.obPack);
+
+	if (isNaN(stock.cb)) throw Error('cb is NaN');
+	const sell = total - Number(stock.cb);
+
+	if (isNaN(stock.cbPack)) throw Error('cbPack is NaN');
+	const shouldConvertToPack = Number(stock.cbPack) > Number(stock.obPack);
+	const sellPack = (shouldConvertToPack ? totalPack + bottleToPack(stock.quantity) : totalPack) - Number(stock.cbPack);
+
+	if (isNaN(stock.price)) throw Error('price is NaN');
+	const amountBottles = sell * Number(stock.price);
+
+	if (isNaN(stock.pricePack)) throw Error('pricePack is NaN');
+	const amountPacks = sellPack * Number(stock.pricePack);
+
+	const amount = amountBottles + amountPacks;
+	return { ...stock, total, totalPack, sell, sellPack, amount };
 }
 
-export function calculateSell(product: CompleteCounterStock): number;
-export function calculateSell(total: number | string, cb: number | string): number;
-export function calculateSell(totalOrProduct: number | string | CompleteCounterStock, cb?: number | string): number {
-	const calculate = (total: number | string, cb?: number | string) => Number(total) - Number(cb);
-	if (typeof totalOrProduct === 'object') return calculate(totalOrProduct.total, totalOrProduct.cb);
-	else return calculate(totalOrProduct, cb);
-}
-
-export function calculateAmount(product: CompleteCounterStock): number;
-export function calculateAmount(sell: number | string, price: number | string): number;
-export function calculateAmount(
-	sellOrProduct: number | string | CompleteCounterStock,
-	price?: number | string,
-): number {
-	const calculate = (sell: number | string, price?: number | string) => Number(sell) * Number(price);
-	if (typeof sellOrProduct === 'object') return calculate(sellOrProduct.sell, sellOrProduct.price);
-	else return calculate(sellOrProduct, price);
+function bottleToPack(quantity: number): number {
+	switch (quantity) {
+		case 750:
+			return 12;
+		case 1000:
+			return 18;
+		case 2000:
+			return 33;
+		default:
+			return 0;
+	}
 }
 
 export const quantity = [90, 180, 330, 375, 500, 650, 750, 1000, 2000] as const;

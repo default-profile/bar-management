@@ -11,11 +11,13 @@
 		{ id: 'id', header: '#', width: 50, hidden: true },
 		{ id: 'name', header: `Name/${quantity}ML`, width: 200, editor: 'text' },
 		{ id: 'price', header: 'Price', width: 100, editor: 'text' },
+		{ id: 'pricePack', header: 'Pack Price', width: 100, editor: 'text', hidden: quantity < 750 },
 	]);
 
 	const isNaN = (value: any) => Number.isNaN(Number(value));
 
 	// TODO: Add types
+	// @ts-ignore
 	const init = (api) => {
 		api.intercept('update-cell', async ({ id, column, value }: { id: number; column: string; value: any }) => {
 			if (column === 'price') {
