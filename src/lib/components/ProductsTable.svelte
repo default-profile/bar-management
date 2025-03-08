@@ -36,8 +36,6 @@
 	};
 </script>
 
-<div class="w-full">
-	<Material>
-		<Grid {data} {columns} {init} />
-	</Material>
-</div>
+<Material>
+	<Grid {data} {columns} {init} />
+</Material>

@@ -17,7 +17,7 @@
 	<div class="flex-1">
 		<a href="/" class="btn text-xl btn-ghost">Bar Management</a>
 	</div>
-	<div class="flex-none">
+	<div class="flex-none overflow-x-clip">
 		{#if $session.data}
 			{#if $session.data.user.role === 'admin'}
 				<!-- Admin menu items -->
@@ -26,7 +26,13 @@
 						<a href="/admin/data" class:link={page.url.pathname === `/admin/data`}>Data</a>
 					</li>
 					<li>
-						<a href="/admin/users" class:link={page.url.pathname === `/admin/users`}>Users</a>
+						<details>
+							<summary>Users</summary>
+							<ul class="z-10 rounded-t-none bg-base-100 p-2">
+								<li><a href="/admin/users/list" class:link={page.url.pathname === '/admin/users/list'}>List</a></li>
+								<li><a href="/admin/users/add" class:link={page.url.pathname === '/admin/users/add'}>Add</a></li>
+							</ul>
+						</details>
 					</li>
 					<li>
 						<details>
@@ -37,6 +43,7 @@
 										<a href="/admin/products/{q}" class:link={page.url.pathname === `/admin/products/${q}`}>{q}ML</a>
 									</li>
 								{/each}
+								<li><a href="/admin/products/add" class:link={page.url.pathname === '/admin/products/add'}>Add</a></li>
 							</ul>
 						</details>
 					</li>
