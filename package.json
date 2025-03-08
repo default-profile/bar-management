@@ -39,7 +39,9 @@
 		"@prisma/client": "^6.4.1",
 		"better-auth": "^1.2.0",
 		"daisyui": "^5.0.0",
+		"jszip": "^3.10.1",
 		"wx-svelte-core": "^2.1.0",
-		"wx-svelte-grid": "^2.1.0"
+		"wx-svelte-grid": "^2.1.0",
+		"xlsx": "^0.18.5"
 	}
 }
