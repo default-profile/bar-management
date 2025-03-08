@@ -1,11 +1,21 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import { quantity } from '$lib/utils';
 </script>
 
 <div class="flex h-full grow items-center justify-center">
 	<div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
-		<form class="card-body" method="POST" action="?/addProduct" use:enhance>
+		<form
+			class="card-body"
+			method="POST"
+			action="?/addProduct"
+			use:enhance={({}) =>
+				({ result }) => {
+					if (result.type === 'success') alert('Product Added');
+					else alert('Something went wrong');
+					applyAction(result);
+				}}
+		>
 			<label for="name" class="fieldset-label">Name</label>
 			<input id="name" type="text" name="name" class="input" placeholder="Name" />
 			<label for="price" class="fieldset-label">Price</label>

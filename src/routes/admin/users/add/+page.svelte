@@ -1,10 +1,20 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 </script>
 
 <div class="flex h-full grow items-center justify-center">
 	<div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
-		<form class="card-body" method="POST" action="?/addUser" use:enhance>
+		<form
+			class="card-body"
+			method="POST"
+			action="?/addUser"
+			use:enhance={({}) =>
+				({ result }) => {
+					if (result.type === 'success') alert('User Added');
+					else alert('Something went wrong');
+					applyAction(result);
+				}}
+		>
 			<label for="name" class="fieldset-label">Name</label>
 			<input id="name" type="text" name="name" class="input" placeholder="Name" />
 			<label for="email" class="fieldset-label">Email</label>
