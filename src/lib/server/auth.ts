@@ -4,6 +4,7 @@ import { betterAuth } from 'better-auth';
 import { APIError } from 'better-call';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin, emailOTP } from 'better-auth/plugins';
+import { sendOtp } from './utils';
 
 export const auth = betterAuth({
 	plugins: [
@@ -11,7 +12,7 @@ export const auth = betterAuth({
 		emailOTP({
 			disableSignUp: true,
 			async sendVerificationOTP({ email, otp, type }) {
-				console.log(email, otp, type);
+				sendOtp(email, otp);
 			},
 		}),
 	],
