@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { env } from '$env/dynamic/private';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 const transporter = nodemailer.createTransport({
 	host: 'smtp.gmail.com',
@@ -19,11 +20,10 @@ export async function sendOtp(email: string, otp: string) {
 		text: `Your otp is ${otp}`,
 	};
 
-	transporter.sendMail(mailOptions, function (error, info) {
-		if (error) {
-			console.log('Error:', error);
-		} else {
-			console.log('Email sent: ', info.response);
-		}
+	return new Promise<SMTPTransport.SentMessageInfo>((resolve, reject) => {
+		transporter.sendMail(mailOptions, (error, info) => {
+			if (error) reject(error);
+			else resolve(info);
+		});
 	});
 }

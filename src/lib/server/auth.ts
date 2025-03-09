@@ -11,8 +11,9 @@ export const auth = betterAuth({
 		admin(),
 		emailOTP({
 			disableSignUp: true,
-			async sendVerificationOTP({ email, otp, type }) {
-				sendOtp(email, otp);
+			async sendVerificationOTP({ email, otp }) {
+				const result = await sendOtp(email, otp);
+				console.log(result);
 			},
 		}),
 	],
