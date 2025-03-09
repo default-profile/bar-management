@@ -4,9 +4,12 @@ import type { Prisma } from '@prisma/client';
 import type { RequestEvent } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
-export async function POST({ request }: RequestEvent) {
+export async function GET({ request }: RequestEvent) {
+	// Prevent unauthorized access by adding the CRON_SECRET environment variable to your project
+	// and check incoming requests. Vercel will add it to all cron job invocations as part of
+	// the Authorization header, allowing you to specify any value you'd like for authorization.
 	const authorizationHeader = request.headers.get('Authorization');
-	if (authorizationHeader !== `Bearer ${env.PRIVATE_CRON_SECRET}`) {
+	if (authorizationHeader !== `Bearer ${env.CRON_SECRET}`) {
 		return Response.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
