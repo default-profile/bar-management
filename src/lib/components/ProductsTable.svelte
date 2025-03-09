@@ -4,6 +4,7 @@
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 	import type { Quantity } from '$lib/types';
 	import type { Product } from '@prisma/client';
+	import DeleteProductButton from './DeleteProductButton.svelte';
 
 	const { data, quantity }: { data: Product[]; quantity: Quantity } = $props();
 
@@ -12,6 +13,7 @@
 		{ id: 'name', header: `Name/${quantity}ML`, width: 200, editor: 'text' },
 		{ id: 'price', header: 'Price', width: 100, editor: 'text' },
 		{ id: 'pricePack', header: 'Pack Price', width: 100, editor: 'text', hidden: quantity < 750 },
+		{ id: 'action', header: 'Action', width: 60, cell: DeleteProductButton },
 	]);
 
 	const isNaN = (value: any) => Number.isNaN(Number(value));

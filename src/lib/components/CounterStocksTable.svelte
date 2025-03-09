@@ -51,6 +51,7 @@
 		{ id: 'amount', header: 'Amount', width: 200 },
 	]);
 
+	// TODO: Use column getters for derived properties
 	const columns = $derived(quantity < 750 ? columnsWithoutPack : columnsWithPack);
 	const isNaN = (value: any) => Number.isNaN(Number(value));
 

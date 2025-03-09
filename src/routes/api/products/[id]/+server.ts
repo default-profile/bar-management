@@ -11,3 +11,12 @@ export async function PATCH({ params, request }: RequestEvent) {
 	await prisma.product.update({ where: { id: Number(params.id) }, data: { [key]: value } });
 	return Response.json({});
 }
+
+export async function DELETE({ params, request }: RequestEvent) {
+	const session = await auth.api.getSession({ headers: request.headers });
+	if (!session) return Response.json({ message: 'Unauthorized' }, { status: 401 });
+	if (session.user.role !== 'admin') Response.json({ message: 'Forbidden' }, { status: 403 });
+
+	await prisma.product.delete({ where: { id: Number(params.id) } });
+	return Response.json({});
+}

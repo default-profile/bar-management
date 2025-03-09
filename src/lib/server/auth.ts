@@ -3,10 +3,11 @@ import prisma from './prisma';
 import { betterAuth } from 'better-auth';
 import { APIError } from 'better-call';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { emailOTP } from 'better-auth/plugins';
+import { admin, emailOTP } from 'better-auth/plugins';
 
 export const auth = betterAuth({
 	plugins: [
+		admin(),
 		emailOTP({
 			disableSignUp: true,
 			async sendVerificationOTP({ email, otp, type }) {
@@ -21,6 +22,9 @@ export const auth = betterAuth({
 		provider: 'postgresql',
 	}),
 	user: {
+		deleteUser: {
+			enabled: true,
+		},
 		additionalFields: {
 			role: {
 				type: 'string',

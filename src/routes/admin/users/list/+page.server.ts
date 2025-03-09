@@ -6,7 +6,7 @@ import type { PageServerLoadEvent } from './$types';
 export const ssr = false;
 
 export async function load({ request }: PageServerLoadEvent) {
-	const users = await prisma.user.findMany({ select: { name: true, email: true }, orderBy: { name: 'asc' } });
+	const users = await prisma.user.findMany({ select: { id: true, name: true, email: true }, orderBy: { name: 'asc' } });
 	const session = await auth.api.getSession({ headers: request.headers });
 	if (!session) return redirect(302, '/auth/login-admin');
 	return { users: users.filter((user) => user.email !== session.user.email) };
