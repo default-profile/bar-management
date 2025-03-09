@@ -4,7 +4,6 @@
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 	import { toCompleteCounterStock } from '$lib/utils';
 	import type { CompleteCounterStock, Quantity } from '$lib/types';
-	import type { CounterStock } from '@prisma/client';
 
 	interface Props {
 		data: CompleteCounterStock[];
@@ -76,7 +75,6 @@
 
 						if (!response.ok) {
 							alert('Something went wrong');
-							console.log(response);
 							return false;
 						}
 					} catch (error) {

@@ -7,14 +7,16 @@ import { env } from '$env/dynamic/private';
 export async function POST({ request }: RequestEvent) {
 	const authorizationHeader = request.headers.get('Authorization');
 	if (authorizationHeader !== `Bearer ${env.PRIVATE_CRON_SECRET}`) {
-		return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
+		return Response.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const today = Temporal.Now.plainDateISO('Asia/Calcutta');
 	const yesterday = today.subtract({ days: 1 });
 
 	const products = await prisma.product.findMany();
-	const yesterdaysCounterStocks = await prisma.counterStock.findMany({ where: { date: yesterday.toString() } });
+	const yesterdaysCounterStocks = await prisma.counterStock.findMany({
+		where: { date: new Date(Date.parse(yesterday.toString())) },
+	});
 
 	const counterStocks = products.map<Prisma.CounterStockUncheckedCreateInput>((product) => {
 		const yesterdaysCounterStock = yesterdaysCounterStocks.find(({ productId }) => productId === product.id);
@@ -25,7 +27,7 @@ export async function POST({ request }: RequestEvent) {
 			quantity: product.quantity,
 			price: product.price,
 			pricePack: product.pricePack,
-			date: today.toString(),
+			date: new Date(Date.parse(today.toString())),
 			ob: yesterdaysCounterStock ? yesterdaysCounterStock.cb : 0,
 			obPack: yesterdaysCounterStock ? yesterdaysCounterStock.cbPack : 0,
 			received: 0,
@@ -33,6 +35,10 @@ export async function POST({ request }: RequestEvent) {
 		};
 	});
 
-	await prisma.counterStock.createMany({ data: counterStocks });
-	return new Response(JSON.stringify({ message: 'OK' }), { status: 200 });
+	try {
+		await prisma.counterStock.createMany({ data: counterStocks });
+		return Response.json({});
+	} catch (error) {
+		return Response.json(error, { status: 400 });
+	}
 }
