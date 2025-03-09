@@ -12,8 +12,11 @@ export const auth = betterAuth({
 		emailOTP({
 			disableSignUp: true,
 			async sendVerificationOTP({ email, otp }) {
-				const result = await sendOtp(email, otp);
-				if (result.rejected) throw new APIError('INTERNAL_SERVER_ERROR', { message: 'Could not send OTP' });
+				try {
+					await sendOtp(email, otp);
+				} catch (error) {
+					throw new APIError('INTERNAL_SERVER_ERROR', { message: 'Could not send otp' });
+				}
 			},
 		}),
 	],
