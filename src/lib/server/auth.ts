@@ -30,14 +30,6 @@ export const auth = betterAuth({
 		deleteUser: {
 			enabled: true,
 		},
-		additionalFields: {
-			role: {
-				type: 'string',
-				required: false,
-				defaultValue: 'user',
-				input: false,
-			},
-		},
 	},
 	hooks: {
 		after: createAuthMiddleware(async (ctx) => {

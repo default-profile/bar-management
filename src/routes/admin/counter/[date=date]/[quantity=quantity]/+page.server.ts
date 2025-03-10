@@ -1,6 +1,4 @@
 import prisma from '$lib/server/prisma';
-import type { CompleteCounterStock, Quantity } from '$lib/types';
-import { toCompleteCounterStock } from '$lib/utils';
 import type { PageServerLoadEvent } from './$types';
 
 export const ssr = false;
@@ -13,6 +11,5 @@ export async function load({ params }: PageServerLoadEvent) {
 		orderBy: { name: 'asc' },
 	});
 
-	const completeStocks = counterStocks.map<CompleteCounterStock>(toCompleteCounterStock);
-	return { counterStocks: completeStocks, date: date.toISOString().split('T')[0], quantity: quantity as Quantity };
+	return { counterStocks, date: date.toISOString().split('T')[0], quantity };
 }

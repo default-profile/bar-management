@@ -2,12 +2,12 @@
 	// @ts-ignore
 	import { Grid, Material } from 'wx-svelte-grid';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
-	import { toCompleteCounterStock } from '$lib/utils';
-	import type { CompleteCounterStock, Quantity } from '$lib/types';
+	import { bottleToPack } from '$lib/utils';
+	import type { CounterStock } from '@prisma/client';
 
 	interface Props {
-		data: CompleteCounterStock[];
-		quantity: Quantity;
+		data: CounterStock[];
+		quantity: number;
 		isAdmin?: boolean;
 	}
 
@@ -17,13 +17,64 @@
 		{ id: 'id', header: '#', width: 50, hidden: true },
 		{ id: 'name', header: `Name/${quantity}ML`, width: 200 },
 		{ id: 'quantity', header: 'Quantity (ML)', width: 150, hidden: true },
-		{ id: 'ob', header: 'O.B', width: 60, editor: isAdmin ? 'text' : undefined },
-		{ id: 'received', header: 'Received', width: 100, editor: 'text' },
-		{ id: 'total', header: 'Total', width: 60 },
-		{ id: 'cb', header: 'C.B.', width: 60, editor: 'text' },
-		{ id: 'sell', header: 'Sell', width: 60 },
+		{
+			id: 'ob',
+			header: 'O.B',
+			width: 60,
+			editor: isAdmin ? 'text' : undefined,
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.ob = Number(value);
+			},
+		},
+		{
+			id: 'received',
+			header: 'Received',
+			width: 100,
+			editor: 'text',
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.received = Number(value);
+			},
+		},
+		{
+			id: 'total',
+			header: 'Total',
+			width: 60,
+			getter(row: CounterStock) {
+				return row.ob + row.received;
+			},
+		},
+		{
+			id: 'cb',
+			header: 'C.B.',
+			width: 60,
+			editor: 'text',
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.cb = Number(value);
+			},
+		},
+		{
+			id: 'sell',
+			header: 'Sell',
+			width: 60,
+			getter(row: CounterStock) {
+				const total = row.ob + row.received;
+				return total - row.cb;
+			},
+		},
 		{ id: 'price', header: 'Price', width: 60 },
-		{ id: 'amount', header: 'Amount', width: 200 },
+		{
+			id: 'amount',
+			header: 'Amount',
+			width: 200,
+			getter(row: CounterStock) {
+				const total = row.ob + row.received;
+				const sell = total - row.cb;
+				return sell * row.price;
+			},
+		},
 	]);
 
 	// Note: Name header was not updating without derived state
@@ -36,18 +87,106 @@
 			header: [{ text: 'O.B', colspan: 2 }, { text: 'Bottle' }],
 			width: 60,
 			editor: isAdmin ? 'text' : undefined,
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.ob = Number(value);
+			},
 		},
-		{ id: 'obPack', header: ['', { text: 'Pack' }], width: 50, editor: isAdmin ? 'text' : undefined },
-		{ id: 'received', header: 'Received', width: 100, editor: 'text' },
-		{ id: 'total', header: [{ text: 'Total', colspan: 2 }, { text: 'Bottle' }], width: 60 },
-		{ id: 'totalPack', header: ['', { text: 'Pack' }], width: 50 },
-		{ id: 'cb', header: [{ text: 'C.B.', colspan: 2 }, { text: 'Bottle' }], width: 60, editor: 'text' },
-		{ id: 'cbPack', header: ['', { text: 'Pack' }], width: 50, editor: 'text' },
-		{ id: 'sell', header: [{ text: 'Sell', colspan: 2 }, { text: 'Bottle' }], width: 60 },
-		{ id: 'sellPack', header: ['', { text: 'Pack' }], width: 50 },
+		{
+			id: 'obPack',
+			header: ['', { text: 'Pack' }],
+			width: 50,
+			editor: isAdmin ? 'text' : undefined,
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.obPack = Number(value);
+			},
+		},
+		{
+			id: 'received',
+			header: 'Received',
+			width: 100,
+			editor: 'text',
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.received = Number(value);
+			},
+		},
+		{
+			id: 'total',
+			header: [{ text: 'Total', colspan: 2 }, { text: 'Bottle' }],
+			width: 60,
+			getter(row: CounterStock) {
+				return row.ob + row.received;
+			},
+		},
+		{
+			id: 'totalPack',
+			header: ['', { text: 'Pack' }],
+			width: 50,
+			getter(row: CounterStock) {
+				return row.obPack;
+			},
+		},
+		{
+			id: 'cb',
+			header: [{ text: 'C.B.', colspan: 2 }, { text: 'Bottle' }],
+			width: 60,
+			editor: 'text',
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.cb = Number(value);
+			},
+		},
+		{
+			id: 'cbPack',
+			header: ['', { text: 'Pack' }],
+			width: 50,
+			editor: 'text',
+			setter(row: CounterStock, value: string | number) {
+				if (isNaN(value)) return;
+				row.cbPack = Number(value);
+			},
+		},
+		{
+			id: 'sell',
+			header: [{ text: 'Sell', colspan: 2 }, { text: 'Bottle' }],
+			width: 60,
+			getter(row: CounterStock) {
+				const total = row.ob + row.received;
+				const shouldConvertToPack = row.cbPack > row.obPack;
+				return total - row.cb - (shouldConvertToPack ? 1 : 0);
+			},
+		},
+		{
+			id: 'sellPack',
+			header: ['', { text: 'Pack' }],
+			width: 50,
+			getter(row: CounterStock) {
+				const totalPack = row.obPack;
+				const shouldConvertToPack = row.cbPack > row.obPack;
+				return (shouldConvertToPack ? totalPack + bottleToPack(row.quantity) : totalPack) - row.cbPack;
+			},
+		},
 		{ id: 'price', header: [{ text: 'Price', colspan: 2 }, { text: 'Bottle' }], width: 60 },
 		{ id: 'pricePack', header: ['', { text: 'Pack' }], width: 50 },
-		{ id: 'amount', header: 'Amount', width: 200 },
+		{
+			id: 'amount',
+			header: 'Amount',
+			width: 200,
+			getter(row: CounterStock) {
+				const total = row.ob + row.received;
+				const totalPack = row.obPack;
+
+				const shouldConvertToPack = row.cbPack > row.obPack;
+				const sell = total - row.cb - (shouldConvertToPack ? 1 : 0);
+				const sellPack = (shouldConvertToPack ? totalPack + bottleToPack(row.quantity) : totalPack) - row.cbPack;
+
+				const amountBottles = sell * row.price;
+				const amountPacks = sellPack * row.pricePack;
+				return amountBottles + amountPacks;
+			},
+		},
 	]);
 
 	// TODO: Use column getters for derived properties
@@ -59,12 +198,12 @@
 	const init = (api) => {
 		api.intercept(
 			'update-cell',
-			async ({ id, column, value }: { id: number; column: keyof CompleteCounterStock; value: number }) => {
+			async ({ id, column, value }: { id: number; column: keyof CounterStock; value: number }) => {
 				if (isNaN(value)) return false;
 				const newValue = Number(value);
 				if (newValue < 0) return false;
 
-				const editableFields: Array<keyof CompleteCounterStock> = ['ob', 'obPack', 'received', 'cb', 'cbPack'];
+				const editableFields: Array<keyof CounterStock> = ['ob', 'obPack', 'received', 'cb', 'cbPack'];
 
 				if (editableFields.includes(column)) {
 					try {
@@ -85,32 +224,6 @@
 				}
 			},
 		);
-
-		api.on('update-cell', ({ id, column }: { id: number; column: string }) => {
-			function getCurrentStock() {
-				const stocks: CompleteCounterStock[] = api.getState().data;
-				const stock: CompleteCounterStock = stocks.find((product) => product.id === id)!;
-				// stock[column] = Number(value);
-				return stock;
-			}
-
-			if (['ob', 'obPack', 'received'].includes(column)) {
-				const stock = toCompleteCounterStock(getCurrentStock());
-				api.exec('update-cell', { id, column: 'total', value: stock.total });
-				api.exec('update-cell', { id, column: 'totalPack', value: stock.totalPack });
-			}
-
-			if (['total', 'totalPack', 'cb', 'cbPack'].includes(column)) {
-				const stock = toCompleteCounterStock(getCurrentStock());
-				api.exec('update-cell', { id, column: 'sell', value: stock.sell });
-				api.exec('update-cell', { id, column: 'sellPack', value: stock.sellPack });
-			}
-
-			if (['price', 'pricePack', 'sell', 'sellPack'].includes(column)) {
-				const stock = toCompleteCounterStock(getCurrentStock());
-				api.exec('update-cell', { id, column: 'amount', value: stock.amount });
-			}
-		});
 	};
 </script>
 
