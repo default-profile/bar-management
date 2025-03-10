@@ -13,7 +13,10 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check .",
 		"db:reset": "prisma db push --force-reset --accept-data-loss",
+		"db:reset:prod": "env-cmd -f .env.production prisma db push --force-reset --accept-data-loss",
 		"predb:seed": "npm run db:reset",
+		"predb:seed:prod": "npm run db:reset:prod",
+		"db:seed:prod": "env-cmd -f .env.production tsx prisma/seed.ts",
 		"db:seed": "tsx prisma/seed.ts",
 		"db:view": "prisma studio"
 	},
@@ -24,6 +27,7 @@
 		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/nodemailer": "^6.4.17",
+		"env-cmd": "^10.1.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",

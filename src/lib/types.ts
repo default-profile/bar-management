@@ -1,4 +1,3 @@
-import type { quantity } from '$lib/utils';
 import type { CounterStock } from '@prisma/client';
 
 export interface CompleteCounterStock extends CounterStock {
@@ -8,5 +7,3 @@ export interface CompleteCounterStock extends CounterStock {
 	sellPack: number;
 	amount: number;
 }
-
-export type Quantity = (typeof quantity)[number];

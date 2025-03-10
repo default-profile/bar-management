@@ -2,11 +2,10 @@
 	// @ts-ignore
 	import { Grid, Material } from 'wx-svelte-grid';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
-	import type { Quantity } from '$lib/types';
 	import type { Product } from '@prisma/client';
 	import DeleteProductButton from './DeleteProductButton.svelte';
 
-	const { data, quantity }: { data: Product[]; quantity: Quantity } = $props();
+	const { data, quantity }: { data: Product[]; quantity: number } = $props();
 
 	const columns = $derived([
 		{ id: 'id', header: '#', width: 50, hidden: true },

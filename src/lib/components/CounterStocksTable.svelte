@@ -2,7 +2,7 @@
 	// @ts-ignore
 	import { Grid, Material } from 'wx-svelte-grid';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
-	import { bottleToPack } from '$lib/utils';
+	import { toCompleteCounterStock } from '$lib/utils';
 	import type { CounterStock } from '@prisma/client';
 
 	interface Props {
@@ -42,7 +42,7 @@
 			header: 'Total',
 			width: 60,
 			getter(row: CounterStock) {
-				return row.ob + row.received;
+				return toCompleteCounterStock(row).total;
 			},
 		},
 		{
@@ -60,8 +60,7 @@
 			header: 'Sell',
 			width: 60,
 			getter(row: CounterStock) {
-				const total = row.ob + row.received;
-				return total - row.cb;
+				return toCompleteCounterStock(row).sell;
 			},
 		},
 		{ id: 'price', header: 'Price', width: 60 },
@@ -70,9 +69,7 @@
 			header: 'Amount',
 			width: 200,
 			getter(row: CounterStock) {
-				const total = row.ob + row.received;
-				const sell = total - row.cb;
-				return sell * row.price;
+				return toCompleteCounterStock(row).amount;
 			},
 		},
 	]);
@@ -117,7 +114,7 @@
 			header: [{ text: 'Total', colspan: 2 }, { text: 'Bottle' }],
 			width: 60,
 			getter(row: CounterStock) {
-				return row.ob + row.received;
+				return toCompleteCounterStock(row).total;
 			},
 		},
 		{
@@ -125,7 +122,7 @@
 			header: ['', { text: 'Pack' }],
 			width: 50,
 			getter(row: CounterStock) {
-				return row.obPack;
+				return toCompleteCounterStock(row).totalPack;
 			},
 		},
 		{
@@ -153,9 +150,7 @@
 			header: [{ text: 'Sell', colspan: 2 }, { text: 'Bottle' }],
 			width: 60,
 			getter(row: CounterStock) {
-				const total = row.ob + row.received;
-				const shouldConvertToPack = row.cbPack > row.obPack;
-				return total - row.cb - (shouldConvertToPack ? 1 : 0);
+				return toCompleteCounterStock(row).sell;
 			},
 		},
 		{
@@ -163,9 +158,7 @@
 			header: ['', { text: 'Pack' }],
 			width: 50,
 			getter(row: CounterStock) {
-				const totalPack = row.obPack;
-				const shouldConvertToPack = row.cbPack > row.obPack;
-				return (shouldConvertToPack ? totalPack + bottleToPack(row.quantity) : totalPack) - row.cbPack;
+				return toCompleteCounterStock(row).sellPack;
 			},
 		},
 		{ id: 'price', header: [{ text: 'Price', colspan: 2 }, { text: 'Bottle' }], width: 60 },
@@ -175,16 +168,7 @@
 			header: 'Amount',
 			width: 200,
 			getter(row: CounterStock) {
-				const total = row.ob + row.received;
-				const totalPack = row.obPack;
-
-				const shouldConvertToPack = row.cbPack > row.obPack;
-				const sell = total - row.cb - (shouldConvertToPack ? 1 : 0);
-				const sellPack = (shouldConvertToPack ? totalPack + bottleToPack(row.quantity) : totalPack) - row.cbPack;
-
-				const amountBottles = sell * row.price;
-				const amountPacks = sellPack * row.pricePack;
-				return amountBottles + amountPacks;
+				return toCompleteCounterStock(row).amount;
 			},
 		},
 	]);
